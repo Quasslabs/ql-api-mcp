@@ -1,0 +1,12 @@
+Copyright (c) 2026 QuassLabs, Inc. All rights reserved.
+
+This repository contains documentation and registry metadata for the QuassLabs
+API MCP server. It does not contain the server implementation.
+
+You may read, quote, and link to this material, and reproduce the connection
+snippets and the server.json manifest for the purpose of connecting to or
+listing the QuassLabs API MCP server in a client, directory, or registry.
+
+Use of the QuassLabs API itself is governed by the terms published at
+https://quasslabs.com/terms. Nothing in this repository grants any licence to
+the QuassLabs API platform, its source, or its underlying implementations.
