@@ -1,6 +1,6 @@
 # QuassLabs API — MCP server
 
-27 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them - they are scorers, linters, validators and calculators, so results are reproducible and cost pennies. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, Mermaid diagram generation and offline rendering, and BLM land lookup.
+29 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them - they are scorers, linters, validators and calculators, so results are reproducible and cost pennies. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, Mermaid diagram generation and offline rendering, and BLM land lookup.
 
 **Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable-http
 
@@ -39,7 +39,7 @@ registry can discover the catalogue without credentials. `tools/call` requires a
 
 Usage-based credits via Stripe. $6 per 100 credits ($0.06/credit), self-serve checkout. Credit cost is per successful call and is refunded automatically on a 5xx.
 
-## Tools (27)
+## Tools (29)
 
 | Tool | Credits | What it does |
 |---|---|---|
@@ -70,6 +70,8 @@ Usage-based credits via Stripe. $6 per 100 credits ($0.06/credit), self-serve ch
 | `uploads` | 0 | Presigned S3 PUT URL so file-ingesting tools can read a document by upload_id (free) |
 | `feedback` | 0 | Submit a bug, feature request, or docs gap against your key (free) |
 | `rate_call` | 0 | Thumbs up/down a prior metered call by its request_id (free) |
+| `regex_lint` | 10 | ReDoS risk analysis plus a plain-English explanation of a regular expression |
+| `jwt_inspect` | 10 | Decode a JWT without verifying it and flag alg:none, missing or over-long expiry, and payload claims that look like secrets |
 
 ## Not yet live
 
