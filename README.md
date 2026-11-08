@@ -84,10 +84,9 @@ missing key, rate limit, insufficient credits) costs nothing, and a call that
 fails on our side (any 5xx) is refunded automatically. That includes
 `supply_chain_scan` archives that download but are rejected (not a ZIP, an
 unsafe path, too many entries, or too large once extracted): the archive is
-checked before anything is charged. One exception to know about:
-`convert_diagram` charges when every diagram fails to render (`422
-mermaid_render_failed`) or the rendered output is over the size limit (`413
-output_too_large`), because the rendering work has already been done.
+checked before anything is charged. A `convert_diagram` call whose diagrams
+all fail to render (`422 mermaid_render_failed`) or whose output is over the
+size limit (`413 output_too_large`) is refunded too.
 
 ## Tools (33)
 
