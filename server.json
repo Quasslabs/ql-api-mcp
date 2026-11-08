@@ -3,7 +3,7 @@
   "name": "com.quasslabs/api",
   "title": "QuassLabs API",
   "description": "30+ deterministic dev and delivery tools: linting, metrics, diagrams, model advice, AI-text checks.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "websiteUrl": "https://docs.quasslabs.com",
   "repository": {
     "url": "https://github.com/Quasslabs/ql-api-mcp",
@@ -32,7 +32,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "Bearer qlk_... API key from https://quasslabs.com/api (needed for tools/call only)",
+          "description": "Bearer qlk_... API key from https://quasslabs.com/api, or from the account tool's signup action (needed for tools/call, except account signup and checkout_status)",
           "isRequired": false,
           "isSecret": true
         }

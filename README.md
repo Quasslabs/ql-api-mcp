@@ -1,6 +1,6 @@
 # QuassLabs API — MCP server
 
-33 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene and supply-chain scanning, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
+32 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene and supply-chain scanning, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
 
 **Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable HTTP (stateless JSON-RPC 2.0) · **Server version:** 0.2.0
 
@@ -52,17 +52,20 @@ Or call it directly:
 curl -sS -X POST https://api.quasslabs.com/mcp \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer qlk_YOUR_KEY' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"account_balance","arguments":{}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"account","arguments":{"action":"balance"}}}'
 ```
 
-**Getting a key.** Coming soon: self-serve key signup, with 300 free credits
-every month. Until then keys are issued on request through https://quasslabs.com.
+**Getting a key.** Sign up at https://quasslabs.com/api, or from inside an agent
+with the `account` tool (`action: "signup"`, no key needed). Either way you get
+an email with a one-time link, and the key is shown on quasslabs.com, never in
+the agent transcript. Every key gets 300 free credits each month.
 
 ## Authentication
 
 `initialize`, `tools/list` and `ping` are **unauthenticated**, so any client or
 registry can discover the catalogue without credentials. `tools/call` requires
-the API key. Keys are stored only as a SHA-256 hash, so a lost key cannot be
+the API key, except the `account` tool's `signup` and `checkout_status`
+actions. Keys are stored only as a SHA-256 hash, so a lost key cannot be
 recovered, only revoked and reissued.
 
 ## Pricing
@@ -74,9 +77,9 @@ Prepaid credits, 1 credit = $0.01:
 | Starter | $5 | 500 |
 | Pro | $20 | 2,500 |
 
-Buy a pack from inside an agent with the `buy_credits` tool (it returns a
-Stripe Checkout link for a human to pay), and check what is left with
-`account_balance`. Each key's free monthly credits are spent before purchased
+Buy a pack from inside an agent with the `account` tool (`action: "buy_credits"`
+returns a Stripe Checkout link for a human to pay), and check what is left with
+`action: "balance"`. Each key's free monthly credits are spent before purchased
 credits and refill on the first day of each UTC month.
 
 Failed calls are not billed: a call rejected before the tool runs (bad input,
@@ -88,7 +91,7 @@ checked before anything is charged. A `convert_diagram` call whose diagrams
 all fail to render (`422 mermaid_render_failed`) or whose output is over the
 size limit (`413 output_too_large`) is refunded too.
 
-## Tools (33)
+## Tools (32)
 
 Credits are per successful call. Tools marked 0 are free but still need a key.
 
@@ -149,8 +152,7 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 
 | Tool | Credits | What it does |
 |---|---|---|
-| `account_balance` | 0 | This key's credit balance, free monthly credits left and when they reset, plan, and key_id |
-| `buy_credits` | 0 | Get a Stripe Checkout link to top up this key: $5 / 500 or $20 / 2,500 credits |
+| `account` | 0 | One tool for your account. `action`: `signup` (email a one-time key link, no key needed), `balance` (credits, free credits left, reset date), `buy_credits` (Stripe Checkout link: $5 / 500 or $20 / 2,500), `checkout_status` (did a purchase land) |
 | `create_upload` | 0 | Presigned S3 PUT URL so file-ingesting tools can read a document by upload_id |
 | `send_feedback` | 0 | Submit a bug, idea, or docs gap against your key. Missing a tool? Send `kind: "tool_request"` |
 | `rate_call` | 0 | Thumbs up/down a prior metered call by its request_id |
