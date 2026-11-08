@@ -81,9 +81,13 @@ credits and refill on the first day of each UTC month.
 
 Failed calls are not billed: a call rejected before the tool runs (bad input,
 missing key, rate limit, insufficient credits) costs nothing, and a call that
-fails on our side (any 5xx) is refunded automatically. One exception to know
-about: `supply_chain_scan` charges for an archive that downloads but then cannot
-be unpacked (not a ZIP, too many entries, or too large once extracted).
+fails on our side (any 5xx) is refunded automatically. That includes
+`supply_chain_scan` archives that download but are rejected (not a ZIP, an
+unsafe path, too many entries, or too large once extracted): the archive is
+checked before anything is charged. One exception to know about:
+`convert_diagram` charges when every diagram fails to render (`422
+mermaid_render_failed`) or the rendered output is over the size limit (`413
+output_too_large`), because the rendering work has already been done.
 
 ## Tools (33)
 
@@ -149,7 +153,7 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 | `account_balance` | 0 | This key's credit balance, free monthly credits left and when they reset, plan, and key_id |
 | `buy_credits` | 0 | Get a Stripe Checkout link to top up this key: $5 / 500 or $20 / 2,500 credits |
 | `create_upload` | 0 | Presigned S3 PUT URL so file-ingesting tools can read a document by upload_id |
-| `send_feedback` | 0 | Submit a bug, feature request, or docs gap against your key |
+| `send_feedback` | 0 | Submit a bug, idea, or docs gap against your key. Missing a tool? Send `kind: "tool_request"` |
 | `rate_call` | 0 | Thumbs up/down a prior metered call by its request_id |
 
 `tools/list` only ever advertises what is callable right now. `compress`
