@@ -101,7 +101,7 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 |---|---|---|
 | `alignment_gate` | 35 | Grade an AI system prompt against a 45-criterion alignment/safety rubric: letter grade, per-flag remediation, pass/fail |
 | `humanizer_score` | 0 | 0-1 AI-ness score plus the exact patterns that fired |
-| `humanize_text` | 3 | Rewrite prose to strip mechanical AI-writing tells |
+| `humanize_text` | 1 | Rewrite prose to strip mechanical AI-writing tells |
 | `readability_grade` | 0 | Flesch Reading Ease and Flesch-Kincaid Grade Level with a plain-language band |
 
 ### Engineering and security
@@ -114,31 +114,31 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 | `supply_chain_scan` | 5 | Scan a whole repo ZIP (manifests, lockfiles, MCP server configs) against a known-compromise catalog |
 | `log_analyzer` | 5 | Level breakdown, time range, and normalized error clusters from a raw log file (up to 5MB) |
 | `log_audit_creator` | 5 | Feature list in, concrete audit-event catalog out, optionally targeted at SOC2/HIPAA/GDPR/PCI |
-| `regex_lint` | 3 | ReDoS risk analysis plus a plain-English explanation of a regular expression; compiles the pattern but never runs it |
-| `mcp_tool_lint` | 3 | Lint MCP tool definitions for model usability: vague descriptions, untyped parameters, near-duplicates, missing annotations, tool-poisoning phrases |
-| `openapi_diff` | 3 | Breaking-change report between two OpenAPI 3.x specs (JSON or YAML), with the semver bump it needs |
+| `regex_lint` | 1 | ReDoS risk analysis plus a plain-English explanation of a regular expression; compiles the pattern but never runs it |
+| `mcp_tool_lint` | 1 | Lint MCP tool definitions for model usability: vague descriptions, untyped parameters, near-duplicates, missing annotations, tool-poisoning phrases |
+| `openapi_diff` | 1 | Breaking-change report between two OpenAPI 3.x specs (JSON or YAML), with the semver bump it needs |
 
 ### Delivery and QA
 
 | Tool | Credits | What it does |
 |---|---|---|
-| `ticket_lint` | 3 | Whole-ticket quality linter with severity-coded findings, batched up to 50 |
-| `story_lint` | 3 | User-story structure: narrative completeness, atomicity, testability |
-| `acceptance_criteria_validator` | 3 | Per-AC problems: vague/untestable, non-atomic, no observable outcome, missing coverage |
-| `coverage_check` | 3 | Requirements-vs-stories coverage score, gaps, and orphan stories (scope creep) |
-| `defect_triage` | 3 | Bug severity, category, repro-step presence, and what information is missing |
-| `sprint_health` | 3 | 1-24 sprints in, health-tagged delivery metrics out |
-| `worklog_guardrail` | 3 | Run timesheet entries through configurable policy guardrails before posting them |
-| `estimate_sanity` | 3 | Classify story/task hour estimates against benchmarks: in-range, borderline, over, under |
-| `pr_description_lint` | 3 | Missing body, absent test evidence, absent rationale, unstructured long body |
-| `commit_hygiene` | 3 | Conventional-commit format, vague subjects, length limits, and a secret-pattern scan |
+| `ticket_lint` | 1 | Whole-ticket quality linter with severity-coded findings, batched up to 50 |
+| `story_lint` | 1 | User-story structure: narrative completeness, atomicity, testability |
+| `acceptance_criteria_validator` | 1 | Per-AC problems: vague/untestable, non-atomic, no observable outcome, missing coverage |
+| `coverage_check` | 1 | Requirements-vs-stories coverage score, gaps, and orphan stories (scope creep) |
+| `defect_triage` | 1 | Bug severity, category, repro-step presence, and what information is missing |
+| `sprint_health` | 1 | 1-24 sprints in, health-tagged delivery metrics out |
+| `worklog_guardrail` | 1 | Run timesheet entries through configurable policy guardrails before posting them |
+| `estimate_sanity` | 1 | Classify story/task hour estimates against benchmarks: in-range, borderline, over, under |
+| `pr_description_lint` | 1 | Missing body, absent test evidence, absent rationale, unstructured long body |
+| `commit_hygiene` | 1 | Conventional-commit format, vague subjects, length limits, and a secret-pattern scan |
 
 ### Diagrams
 
 | Tool | Credits | What it does |
 |---|---|---|
 | `describe_diagram` | 5 | Plain-English description in, Mermaid diagram source out |
-| `convert_diagram` | 3 | Pre-render Mermaid to inline SVG so HTML works offline, in email, and in PDF exports |
+| `convert_diagram` | 1 | Pre-render Mermaid to inline SVG so HTML works offline, in email, and in PDF exports |
 | `diagram_contrast` | 0 | Diagram QA: every WCAG-AA label-contrast failure in a Mermaid/SVG/HTML diagram, with fixes |
 
 ### Data
