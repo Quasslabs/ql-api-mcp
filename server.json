@@ -2,24 +2,48 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.quasslabs/api",
   "title": "QuassLabs API",
-  "description": "29 deterministic dev and delivery tools: linting, metrics, diagrams, model advice, AI-text checks.",
-  "version": "0.1.0",
+  "description": "30+ deterministic dev and delivery tools: linting, metrics, diagrams, model advice, AI-text checks.",
+  "version": "0.2.0",
   "websiteUrl": "https://docs.quasslabs.com",
   "repository": {
     "url": "https://github.com/Quasslabs/ql-api-mcp",
     "source": "github"
   },
+  "icons": [
+    {
+      "src": "https://quasslabs.com/apple-touch-icon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "180x180"
+      ]
+    },
+    {
+      "src": "https://quasslabs.com/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    }
+  ],
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://api.quasslabs.com/mcp"
+      "url": "https://api.quasslabs.com/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer qlk_... API key from https://quasslabs.com/api (needed for tools/call only)",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
     }
   ],
   "_meta": {
     "io.modelcontextprotocol.registry/publisher-provided": {
       "auth": "Bearer qlk_* API key required for tools/call. initialize, tools/list and ping are unauthenticated so the catalog is discoverable without credentials. OAuth 2.1 deferred (only the Anthropic Connectors Directory requires it).",
       "namespaceVerification": "com.quasslabs/* is granted by DNS verification of the apex quasslabs.com, not api.quasslabs.com - the registry derives the namespace from the reverse-DNS of the verified domain.",
-      "toolCount": "29 live. Two further tools (supply_chain_scan, compress) are built but gated on a container image build, so tools/list correctly omits them."
+      "toolCount": "33. compress is temporarily disabled and hidden from tools/list; tools/list always shows exactly what is callable right now."
     }
   }
 }

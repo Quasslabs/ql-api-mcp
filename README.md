@@ -1,19 +1,38 @@
 # QuassLabs API — MCP server
 
-29 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them - they are scorers, linters, validators and calculators, so results are reproducible and cost pennies. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, Mermaid diagram generation and offline rendering, and BLM land lookup.
+33 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene and supply-chain scanning, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
 
-**Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable-http
+**Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable HTTP (stateless JSON-RPC 2.0) · **Server version:** 0.2.0
+
+Documentation: https://docs.quasslabs.com
 
 ## Connect
 
-Claude Code:
+Every client sends the same thing: a `Bearer qlk_...` API key in the
+`Authorization` header. Hosts that reserve `Authorization` for themselves can
+send `X-API-Key: qlk_...` instead.
+
+**Claude Code**
 
 ```
 claude mcp add --transport http quasslabs https://api.quasslabs.com/mcp \
   --header "Authorization: Bearer qlk_YOUR_KEY"
 ```
 
-Any MCP client that supports streamable HTTP:
+**Cursor** (`~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project)
+
+```json
+{
+  "mcpServers": {
+    "quasslabs": {
+      "url": "https://api.quasslabs.com/mcp",
+      "headers": { "Authorization": "Bearer qlk_YOUR_KEY" }
+    }
+  }
+}
+```
+
+**Any other client that supports streamable HTTP**
 
 ```json
 {
@@ -27,58 +46,121 @@ Any MCP client that supports streamable HTTP:
 }
 ```
 
-Get a key at https://quasslabs.com.
+Or call it directly:
+
+```
+curl -sS -X POST https://api.quasslabs.com/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer qlk_YOUR_KEY' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"account_balance","arguments":{}}}'
+```
+
+**Getting a key.** Coming soon: self-serve key signup, with 300 free credits
+every month. Until then keys are issued on request through https://quasslabs.com.
 
 ## Authentication
 
 `initialize`, `tools/list` and `ping` are **unauthenticated**, so any client or
-registry can discover the catalogue without credentials. `tools/call` requires a
-`Bearer qlk_*` API key in the `Authorization` header.
+registry can discover the catalogue without credentials. `tools/call` requires
+the API key. Keys are stored only as a SHA-256 hash, so a lost key cannot be
+recovered, only revoked and reissued.
 
 ## Pricing
 
-Usage-based credits via Stripe. $6 per 100 credits ($0.06/credit), self-serve checkout. Credit cost is per successful call and is refunded automatically on a 5xx.
+Prepaid credits, 1 credit = $0.01:
 
-## Tools (29)
+| Pack | Price | Credits |
+|---|---|---|
+| Starter | $5 | 500 |
+| Pro | $20 | 2,500 |
+
+Buy a pack from inside an agent with the `buy_credits` tool (it returns a
+Stripe Checkout link for a human to pay), and check what is left with
+`account_balance`. Each key's free monthly credits are spent before purchased
+credits and refill on the first day of each UTC month.
+
+Failed calls are not billed: a call rejected before the tool runs (bad input,
+missing key, rate limit, insufficient credits) costs nothing, and a call that
+fails on our side (any 5xx) is refunded automatically. One exception to know
+about: `supply_chain_scan` charges for an archive that downloads but then cannot
+be unpacked (not a ZIP, too many entries, or too large once extracted).
+
+## Tools (33)
+
+Credits are per successful call. Tools marked 0 are free but still need a key.
+
+### Writing and prompts
 
 | Tool | Credits | What it does |
 |---|---|---|
-| `alignment_gate` | 20 | Grade an AI system prompt against a 45-criterion alignment/safety rubric: letter grade, per-flag remediation, pass/fail |
-| `describe_diagram` | 30 | Plain-English description in, Mermaid diagram source out |
-| `convert_diagram` | 20 | Pre-render Mermaid to inline SVG so HTML works offline, in email, and in PDF exports |
-| `log_analyzer` | 20 | Level breakdown, time range, and normalized error clusters from a raw log file (up to 5MB) |
-| `log_audit_creator` | 20 | Feature list in, concrete audit-event catalog out, optionally targeted at SOC2/HIPAA/GDPR/PCI |
-| `blm_land_lookup` | 10 | BLM land status for a US coordinate: ownership, allowed activities, permit requirements, special designations |
-| `diagram_contrast` | 10 | Diagram QA: every WCAG-AA label-contrast failure in a Mermaid/SVG/HTML diagram, with fixes |
-| `saas_metrics` | 10 | ARR/ARPA/LTV/CAC/payback/Rule-of-40/NRR/GRR computed and health-tagged, plus an overall grade |
-| `acceptance_criteria_validator` | 10 | Per-AC problems: vague/untestable, non-atomic, no observable outcome, missing coverage |
-| `coverage_check` | 10 | Requirements-vs-stories coverage score, gaps, and orphan stories (scope creep) |
-| `defect_triage` | 10 | Bug severity, category, repro-step presence, and what information is missing |
-| `tool_advisor` | 10 | Which QL-API endpoint fits a task, ranked with a confidence label |
-| `dependency_check` | 10 | Dependency-manifest hygiene across npm/pip/go/gem/composer/pub manifests and lockfiles |
-| `ticket_lint` | 10 | Whole-ticket quality linter with severity-coded findings, batched up to 50 |
-| `story_lint` | 10 | User-story structure: narrative completeness, atomicity, testability |
-| `estimate_sanity` | 10 | Classify story/task hour estimates against benchmarks: in-range, borderline, over, under |
-| `pr_description_lint` | 10 | Missing body, absent test evidence, absent rationale, unstructured long body |
-| `commit_hygiene` | 10 | Conventional-commit format, vague subjects, length limits, and a secret-pattern scan |
-| `readability_grade` | 10 | Flesch Reading Ease and Flesch-Kincaid Grade Level with a plain-language band |
-| `sprint_health` | 10 | 1-24 sprints in, health-tagged delivery metrics out |
-| `worklog_guardrail` | 10 | Run timesheet entries through configurable policy guardrails before posting them |
-| `humanizer_score` | 3 | 0-1 AI-ness score plus the exact patterns that fired |
-| `humanize` | 3 | Rewrite prose to strip mechanical AI-writing tells |
-| `model_advisor` | 2 | Recommended model, fallback chain, do-not-use list, and a cost comparison for a task |
-| `uploads` | 0 | Presigned S3 PUT URL so file-ingesting tools can read a document by upload_id (free) |
-| `feedback` | 0 | Submit a bug, feature request, or docs gap against your key (free) |
-| `rate_call` | 0 | Thumbs up/down a prior metered call by its request_id (free) |
-| `regex_lint` | 10 | ReDoS risk analysis plus a plain-English explanation of a regular expression |
-| `jwt_inspect` | 10 | Decode a JWT without verifying it and flag alg:none, missing or over-long expiry, and payload claims that look like secrets |
+| `alignment_gate` | 35 | Grade an AI system prompt against a 45-criterion alignment/safety rubric: letter grade, per-flag remediation, pass/fail |
+| `humanizer_score` | 0 | 0-1 AI-ness score plus the exact patterns that fired |
+| `humanize_text` | 3 | Rewrite prose to strip mechanical AI-writing tells |
+| `readability_grade` | 0 | Flesch Reading Ease and Flesch-Kincaid Grade Level with a plain-language band |
 
-## Not yet live
+### Engineering and security
 
-| Tool | Status | What it will do |
+| Tool | Credits | What it does |
 |---|---|---|
-| `supply_chain_scan` | built, awaiting container image build | Scan manifests, lockfiles and MCP server configs for known supply-chain compromises - treats MCP configuration as a security surface |
-| `compress` | built, awaiting container image build | Shrink a prompt/context toward a target token fraction with LLMLingua-2 before sending it downstream |
+| `model_advisor` | 0 | Recommended model, fallback chain, do-not-use list, and a cost comparison for a task |
+| `tool_advisor` | 0 | Which of these tools fits a task, ranked with a confidence label and the MCP tool name to call |
+| `dependency_check` | 0 | Lint pasted dependency manifests for hygiene: pinning, lockfiles, insecure sources, install scripts, dependency confusion |
+| `supply_chain_scan` | 5 | Scan a whole repo ZIP (manifests, lockfiles, MCP server configs) against a known-compromise catalog |
+| `log_analyzer` | 5 | Level breakdown, time range, and normalized error clusters from a raw log file (up to 5MB) |
+| `log_audit_creator` | 5 | Feature list in, concrete audit-event catalog out, optionally targeted at SOC2/HIPAA/GDPR/PCI |
+| `regex_lint` | 3 | ReDoS risk analysis plus a plain-English explanation of a regular expression; compiles the pattern but never runs it |
+| `mcp_tool_lint` | 3 | Lint MCP tool definitions for model usability: vague descriptions, untyped parameters, near-duplicates, missing annotations, tool-poisoning phrases |
+| `openapi_diff` | 3 | Breaking-change report between two OpenAPI 3.x specs (JSON or YAML), with the semver bump it needs |
+
+### Delivery and QA
+
+| Tool | Credits | What it does |
+|---|---|---|
+| `ticket_lint` | 3 | Whole-ticket quality linter with severity-coded findings, batched up to 50 |
+| `story_lint` | 3 | User-story structure: narrative completeness, atomicity, testability |
+| `acceptance_criteria_validator` | 3 | Per-AC problems: vague/untestable, non-atomic, no observable outcome, missing coverage |
+| `coverage_check` | 3 | Requirements-vs-stories coverage score, gaps, and orphan stories (scope creep) |
+| `defect_triage` | 3 | Bug severity, category, repro-step presence, and what information is missing |
+| `sprint_health` | 3 | 1-24 sprints in, health-tagged delivery metrics out |
+| `worklog_guardrail` | 3 | Run timesheet entries through configurable policy guardrails before posting them |
+| `estimate_sanity` | 3 | Classify story/task hour estimates against benchmarks: in-range, borderline, over, under |
+| `pr_description_lint` | 3 | Missing body, absent test evidence, absent rationale, unstructured long body |
+| `commit_hygiene` | 3 | Conventional-commit format, vague subjects, length limits, and a secret-pattern scan |
+
+### Diagrams
+
+| Tool | Credits | What it does |
+|---|---|---|
+| `describe_diagram` | 5 | Plain-English description in, Mermaid diagram source out |
+| `convert_diagram` | 3 | Pre-render Mermaid to inline SVG so HTML works offline, in email, and in PDF exports |
+| `diagram_contrast` | 0 | Diagram QA: every WCAG-AA label-contrast failure in a Mermaid/SVG/HTML diagram, with fixes |
+
+### Data
+
+| Tool | Credits | What it does |
+|---|---|---|
+| `saas_metrics` | 0 | ARR/ARPA/LTV/CAC/payback/Rule-of-40/NRR/GRR computed and health-tagged, plus an overall grade |
+| `blm_land_lookup` | 8 | BLM land status for a US coordinate: ownership, allowed activities, permit requirements, special designations |
+
+### Account and utilities
+
+| Tool | Credits | What it does |
+|---|---|---|
+| `account_balance` | 0 | This key's credit balance, free monthly credits left and when they reset, plan, and key_id |
+| `buy_credits` | 0 | Get a Stripe Checkout link to top up this key: $5 / 500 or $20 / 2,500 credits |
+| `create_upload` | 0 | Presigned S3 PUT URL so file-ingesting tools can read a document by upload_id |
+| `send_feedback` | 0 | Submit a bug, feature request, or docs gap against your key |
+| `rate_call` | 0 | Thumbs up/down a prior metered call by its request_id |
+
+`tools/list` only ever advertises what is callable right now. `compress`
+(LLMLingua-2 prompt compression, 10 credits) is built but temporarily switched
+off, so it is not listed.
+
+### Renamed in 0.2.0
+
+`humanize` is now `humanize_text`, `uploads` is now `create_upload`, and
+`feedback` is now `send_feedback`. The REST endpoints (`/v1/humanize`,
+`/v1/uploads`, `/v1/feedback`) did not change.
 
 ## Links
 
@@ -94,5 +176,5 @@ registry entry, the tool catalogue, and connection instructions. The server is a
 hosted remote endpoint, so there is nothing to install and no server source here.
 The platform implementation is a commercial product and is not open source.
 
-Report a problem with the MCP server through the `feedback` tool (free), or see
-SECURITY.md for security reports.
+Report a problem with the MCP server through the `send_feedback` tool (free), or
+see SECURITY.md for security reports.
