@@ -1,8 +1,8 @@
 # QuassLabs API — MCP server
 
-32 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene and supply-chain scanning, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
+37 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, live vulnerability lookups and supply-chain scanning, CI workflow and SQL migration audits, agent card and skill linting, data cleanup, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
 
-**Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable HTTP (stateless JSON-RPC 2.0) · **Server version:** 0.2.0
+**Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable HTTP (stateless JSON-RPC 2.0) · **Server version:** 0.4.0
 
 Documentation: https://docs.quasslabs.com
 
@@ -91,7 +91,7 @@ checked before anything is charged. A `convert_diagram` call whose diagrams
 all fail to render (`422 mermaid_render_failed`) or whose output is over the
 size limit (`413 output_too_large`) is refunded too.
 
-## Tools (32)
+## Tools (37)
 
 Credits are per successful call. Tools marked 0 are free but still need a key.
 
@@ -110,13 +110,17 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 |---|---|---|
 | `model_advisor` | 0 | Recommended model, fallback chain, do-not-use list, and a cost comparison for a task |
 | `tool_advisor` | 0 | Which of these tools fits a task, ranked with a confidence label and the MCP tool name to call |
-| `dependency_check` | 0 | Lint pasted dependency manifests for hygiene: pinning, lockfiles, insecure sources, install scripts, dependency confusion |
+| `dependency_check` | 0, or 2-5 live | Lint pasted dependency manifests for hygiene: pinning, lockfiles, insecure sources, install scripts, dependency confusion. With `live: true`, also looks up known vulnerabilities (OSV.dev), latest versions, licences and deprecations (deps.dev) and returns a PASS / REVIEW / FAIL verdict: 2 credits up to 50 packages, +1 per further 50, max 5 |
 | `supply_chain_scan` | 5 | Scan a whole repo ZIP (manifests, lockfiles, MCP server configs) against a known-compromise catalog |
 | `log_analyzer` | 5 | Level breakdown, time range, and normalized error clusters from a raw log file (up to 5MB) |
 | `log_audit_creator` | 5 | Feature list in, concrete audit-event catalog out, optionally targeted at SOC2/HIPAA/GDPR/PCI |
 | `regex_lint` | 1 | ReDoS risk analysis plus a plain-English explanation of a regular expression; compiles the pattern but never runs it |
 | `mcp_tool_lint` | 1 | Lint MCP tool definitions for model usability: vague descriptions, untyped parameters, near-duplicates, missing annotations, tool-poisoning phrases |
 | `openapi_diff` | 1 | Breaking-change report between two OpenAPI 3.x specs (JSON or YAML), with the semver bump it needs |
+| `actions_audit` | 1 | Security audit of GitHub Actions workflows: unpinned actions, pull_request_target misuse, script injection, broad permissions, self-hosted runners |
+| `agent_card_lint` | 1 | Lint an A2A agent card for spec conformance, security schemes, duplicate skills and prompt-injection phrases |
+| `skill_lint` | 1 | Lint a SKILL.md or AGENTS.md file: frontmatter, naming, description quality, broken references, injection phrases |
+| `sql_migration_lint` | 1 | Flag risky database migrations: locking DDL, NOT NULL without default, destructive drops and renames, unbounded updates |
 
 ### Delivery and QA
 
@@ -145,6 +149,7 @@ Credits are per successful call. Tools marked 0 are free but still need a key.
 
 | Tool | Credits | What it does |
 |---|---|---|
+| `data_transform` | 1 | Data cleanup: CSV normalise, JSON shape inference, JSON path extract, unit conversion, exact or near-duplicate text removal |
 | `saas_metrics` | 0 | ARR/ARPA/LTV/CAC/payback/Rule-of-40/NRR/GRR computed and health-tagged, plus an overall grade |
 | `blm_land_lookup` | 8 | BLM land status for a US coordinate: ownership, allowed activities, permit requirements, special designations |
 

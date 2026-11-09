@@ -3,7 +3,7 @@
   "name": "com.quasslabs/api",
   "title": "QuassLabs API",
   "description": "30+ deterministic dev and delivery tools: linting, metrics, diagrams, model advice, AI-text checks.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "websiteUrl": "https://docs.quasslabs.com",
   "repository": {
     "url": "https://github.com/Quasslabs/ql-api-mcp",
