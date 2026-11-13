@@ -32,7 +32,7 @@
       "headers": [
         {
           "name": "Authorization",
-          "description": "Bearer qlk_... API key from https://quasslabs.com/api, or from the account tool's signup action (needed for tools/call, except account signup and checkout_status)",
+          "description": "Bearer qlk_... API key from https://quasslabs.com/api, or from the account tool's signup action. Not needed for tools/list, the account tool's signup and checkout_status actions, or the six free tools (rate-limited per network).",
           "isRequired": false,
           "isSecret": true
         }
