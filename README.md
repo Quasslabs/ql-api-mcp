@@ -1,14 +1,28 @@
 # QuassLabs API — MCP server
 
-37 deterministic developer and delivery tools over one authenticated MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, live vulnerability lookups and supply-chain scanning, CI workflow and SQL migration audits, agent card and skill linting, data cleanup, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
+37 deterministic developer and delivery tools over one MCP endpoint. No LLM in the loop for most of them: they are scorers, linters, validators and calculators, so results are reproducible and cheap. Covers prompt-safety grading, AI-writing detection and rewriting, LLM selection and cost advice, ticket/story/PR/commit linting, sprint and SaaS metrics, log analysis, dependency hygiene, live vulnerability lookups and supply-chain scanning, CI workflow and SQL migration audits, agent card and skill linting, data cleanup, MCP tool linting, Mermaid diagram generation and offline rendering, and BLM land lookup.
 
 **Endpoint:** `https://api.quasslabs.com/mcp` · **Transport:** streamable HTTP (stateless JSON-RPC 2.0) · **Server version:** 0.4.0
 
 Documentation: https://docs.quasslabs.com
 
+## Try it without a key
+
+`tools/list` is open, and six free tools run with no key at all:
+`readability_grade`, `saas_metrics`, `model_advisor`, `tool_advisor`,
+`diagram_contrast` and `humanizer_score`. No-key calls are limited to 10 a
+minute and 100 a day per network, and one per JSON-RPC batch.
+
+```
+claude mcp add --transport http quasslabs https://api.quasslabs.com/mcp
+```
+
+The checkers (regex_lint, openapi_diff, supply_chain_scan and the rest) need a
+free key: see "Getting a key" below.
+
 ## Connect
 
-Every client sends the same thing: a `Bearer qlk_...` API key in the
+With a key, every client sends the same thing: a `Bearer qlk_...` API key in the
 `Authorization` header. Hosts that reserve `Authorization` for themselves can
 send `X-API-Key: qlk_...` instead.
 
@@ -65,7 +79,8 @@ the agent transcript. Every key gets 300 free credits each month.
 `initialize`, `tools/list` and `ping` are **unauthenticated**, so any client or
 registry can discover the catalogue without credentials. `tools/call` requires
 the API key, except the `account` tool's `signup` and `checkout_status`
-actions. Keys are stored only as a SHA-256 hash, so a lost key cannot be
+actions and the six free tools listed under "Try it without a key" (rate-limited
+per network). Keys are stored only as a SHA-256 hash, so a lost key cannot be
 recovered, only revoked and reissued.
 
 ## Pricing
@@ -93,7 +108,8 @@ size limit (`413 output_too_large`) is refunded too.
 
 ## Tools (37)
 
-Credits are per successful call. Tools marked 0 are free but still need a key.
+Credits are per successful call. Tools marked 0 are free; the six listed under "Try it without a key" also run
+without one (`dependency_check` is free but needs a key, because its live mode is paid).
 
 ### Writing and prompts
 
