@@ -6,6 +6,8 @@
 
 Documentation: https://docs.quasslabs.com
 
+[![QuassLabs API MCP connector](https://glama.ai/mcp/connectors/com.quasslabs/api/badges/score.svg)](https://glama.ai/mcp/connectors/com.quasslabs/api)
+
 ## Try it without a key
 
 `tools/list` is open, and six free tools run with no key at all:
